@@ -223,7 +223,6 @@
                 grid.innerHTML += `<div class="grid-item ${active} ${filled}" onclick="showQuestion(${i})">${i+1}</div>`;
             });
         }
-
         function submitQuiz(auto = false) {
             if (isFinished || (!auto && !confirm("Xác nhận nộp bài?"))) return;
             isFinished = true; clearInterval(timer);
