@@ -3,235 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SÁT HẠCH VẬN HÀNH MÁY NÂNG - CAEE</title>
+    <title>SÁT HẠCH XE NÂNG - CAEE</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <style>
         :root {
-            --primary-blue: #1a43bf;
-            --secondary-blue: #0d2a80;
-            --accent-orange: #f39c12;
-            --success-green: #27ae60;
-            --danger-red: #e74c3c;
-            --light-gray: #f8f9fa;
-            --dark-text: #2c3e50;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
-            --radius: 12px;
+            --caee-blue: #003399; --header-blue: #0040cc;
+            --btn-orange: #ff6600; --btn-blue: #3366ff;
+            --text-dark: #333;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--caee-blue); font-family: sans-serif; padding-top: 60px; }
         
-        body {
-            background-color: #f0f2f5;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: var(--dark-text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        /* Header */
+        .caee-header { background: var(--header-blue); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 100%; z-index: 1000; }
+        .timer-box { background: #ff3333; padding: 5px 15px; border-radius: 4px; font-weight: bold; }
 
-        /* --- Header --- */
-        .app-header {
-            background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
-            color: white;
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0; width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .header-brand { display: flex; align-items: center; gap: 10px; font-weight: bold; }
-        .timer-display {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-family: monospace;
-            font-size: 1.2rem;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        /* --- Màn hình bắt đầu --- */
-        #start-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 80px 20px 20px;
-            min-height: 100vh;
-        }
-        .card-auth {
-            background: white;
-            width: 100%;
-            max-width: 450px;
-            padding: 40px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-        .logo-placeholder {
-            width: 80px; height: 80px;
-            background: var(--light-gray);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary-blue); font-size: 2rem;
-        }
-        .card-auth h1 { font-size: 1.4rem; margin-bottom: 5px; color: var(--secondary-blue); text-transform: uppercase; }
-        .card-auth h2 { font-size: 1rem; margin-bottom: 25px; opacity: 0.8; }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
-        .input-field {
-            width: 100%; padding: 12px;
-            border: 2px solid #eee; border-radius: 8px;
-            font-size: 1rem; transition: border-color 0.3s;
-        }
-        .input-field:focus { outline: none; border-color: var(--primary-blue); }
-
-        .mode-container {
-            display: flex; align-items: center; justify-content: center;
-            gap: 15px; margin: 20px 0;
-            background: var(--light-gray);
-            padding: 10px; border-radius: 30px;
-        }
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        /* Login Screen */
+        #start-screen { min-height: 90vh; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .school-info { font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* Toggle Switch */
+        .mode-selector { display: flex; align-items: center; justify-content: center; margin-bottom: 20px; gap: 10px; }
+        .switch { position: relative; width: 50px; height: 24px; display: inline-block; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 16px; width: 16px;
-            left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--primary-blue); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        .btn-primary {
-            background: var(--accent-orange); color: white;
-            border: none; width: 100%; padding: 15px;
-            border-radius: 8px; font-weight: bold; font-size: 1rem;
-            cursor: pointer; transition: transform 0.2s, background 0.3s;
-        }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        /* --- Quiz Screen --- */
-        #quiz-screen {
-            display: none;
-            max-width: 1200px;
-            margin: 80px auto 40px;
-            padding: 0 20px;
-            grid-template-columns: 1fr 320px;
-            gap: 25px;
-        }
+        /* Quiz Area */
+        #quiz-screen { max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: 1fr 300px; gap: 20px; padding: 0 15px; }
+        .main-quiz { background: white; padding: 25px; border-radius: 8px; min-height: 400px; }
+        .sidebar { background: white; padding: 20px; border-radius: 8px; height: fit-content; }
         
-        .quiz-main { background: white; border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); height: fit-content; }
-        .q-text { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; color: var(--secondary-blue); }
+        .option-item { border: 2px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+        .option-item:hover { background: #f8f9fa; }
         
-        .options-list { display: grid; gap: 12px; }
-        .option-card {
-            padding: 15px 20px;
-            border: 2px solid #edf2f7;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #fff;
-        }
-        .option-card:hover { border-color: var(--primary-blue); background: #f8fafc; }
+        /* Màu sắc chuẩn cho chế độ ôn tập */
+        .option-item.selected-exam { background: #e7f0ff; border-color: #3366ff; color: #003399; }
+        ..option-item.correct { 
+    background: #d4edda !important; 
+    border-color: #28a745 !important; 
+    color: #155724 !important; 
+    font-weight: bold; 
+}
+.option-item.wrong { 
+    background: #f8d7da !important; 
+    border-color: #dc3545 !important; 
+    color: #721c24 !important; 
+}
+
+        .explanation-box { margin-top: 15px; padding: 15px; background: #eef2f7; border-left: 5px solid #007bff; border-radius: 4px; display: none; line-height: 1.5; }
         
-        .option-card.selected { border-color: var(--primary-blue); background: #e1effe; }
-        .option-card.correct { border-color: var(--success-green) !important; background: #e6fffa !important; color: var(--success-green); font-weight: bold; }
-        .option-card.wrong { border-color: var(--danger-red) !important; background: #fff5f5 !important; color: var(--danger-red); font-weight: bold; }
+        .nav-footer { display: flex; justify-content: space-between; margin-top: 25px; }
+        .btn-nav { background: var(--btn-blue); color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
         
-        .option-prefix {
-            width: 30px; height: 30px;
-            background: #f1f5f9;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 0.9rem; flex-shrink: 0;
-        }
-        .correct .option-prefix { background: var(--success-green); color: white; }
-        .wrong .option-prefix { background: var(--danger-red); color: white; }
-
-        .explanation {
-            margin-top: 25px; padding: 20px;
-            background: #fffaf0; border-left: 4px solid var(--accent-orange);
-            border-radius: 4px; display: none; font-size: 0.95rem;
-        }
-
-        .nav-footer { display: flex; justify-content: space-between; margin-top: 40px; }
-        .btn-nav {
-            padding: 10px 25px; border-radius: 6px; border: 1px solid #e2e8f0;
-            background: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
-        }
-        .btn-nav:hover { background: var(--light-gray); }
-
-        /* --- Sidebar --- */
-        .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        .sidebar-title { font-weight: bold; margin-bottom: 15px; font-size: 0.9rem; color: var(--secondary-blue); text-transform: uppercase; }
-        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .q-dot {
-            aspect-ratio: 1; border: 1px solid #e2e8f0; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
-        }
-        .q-dot.active { background: var(--primary-blue) !important; color: white !important; border-color: var(--primary-blue); }
-        .q-dot.done { background: #e1effe; border-color: var(--primary-blue); color: var(--primary-blue); }
-
-        /* --- Result --- */
-        #result-screen {
-            display: none; max-width: 500px; margin: 100px auto;
-            background: white; padding: 40px; border-radius: var(--radius);
-            box-shadow: var(--shadow); text-align: center;
-        }
-        .score-circle {
-            width: 150px; height: 150px; border-radius: 50%;
-            margin: 0 auto 20px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            border: 8px solid var(--light-gray);
-        }
-        .score-val { font-size: 3rem; font-weight: bold; color: var(--primary-blue); line-height: 1; }
-        .status-badge { display: inline-block; padding: 8px 25px; border-radius: 20px; font-weight: bold; margin-bottom: 25px; font-size: 1.2rem; }
-        .pass { background: #e6fffa; color: var(--success-green); border: 1px solid var(--success-green); }
-        .fail { background: #fff5f5; color: var(--danger-red); border: 1px solid var(--danger-red); }
-
-        @media (max-width: 900px) {
-            #quiz-screen { grid-template-columns: 1fr; margin-top: 70px; }
-            .sidebar { order: -1; }
-        }
+        .q-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        .grid-item { height: 40px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .grid-item.answered { background: var(--caee-blue); color: white; }
+        .grid-item.active { border: 2px solid var(--btn-orange); font-weight: bold; }
+        
+        .btn-submit { background: #ff3333; color: white; border: none; width: 100%; padding: 15px; margin-top: 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; }
+        @media (max-width: 850px) { #quiz-screen { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <header class="app-header" id="app-header" style="display:none;">
-        <div class="header-brand"><i class="fas fa-truck-loading"></i> <span>CAEE - SÁT HẠCH</span></div>
-        <div class="header-info"><div id="timer" class="timer-display">20:00</div></div>
-    </header>
+    <div id="start-screen">
+        <div class="login-box">
+            <div class="school-info">
+                <p>TRƯỜNG CAO ĐẲNG CƠ ĐIỆN NN & MT</p>
+                <p style="color: #0056b3;">KHOA MÁY THI CÔNG</p>
+            </div>
+            <div class="mode-selector">
+                <span>Chế độ:</span>
+                <label class="switch"><input type="checkbox" id="modeToggle"><span class="slider"></span></label>
+                <b id="modeText" style="color: #ff6600;">Thi sát hạch</b>
+            </div>
+            <input type="text" id="studentName" placeholder="Họ và Tên học viên">
+            <input type="text" id="studentID" placeholder="Mã khóa (VD: 4.2026)">
+            <button class="btn-submit" onclick="startQuiz()" style="background: #28a745;">BẮT ĐẦU LÀM BÀI</button>
+        </div>
+    </div>
 
-    <section id="start-screen">
-        <div class="card-auth">
-            <div class="logo-placeholder"><i class="fas fa-university"></i></div>
-            <h1>CAEE - KHOA MÁY THI CÔNG</h1>
-            <h2 style="margin-top: 10px; color: var(--primary-blue);">HỆ THỐNG THI TRỰC TUYẾN</h2>
-            <div class="form-group">
-                <label>Họ và tên học viên</label>
-                <input type="text" id="studentName" class="input-field" placeholder="Nhập họ tên...">
-            </div>
-            <div class="form-group">
-                <label>Lớp / Khóa đào tạo</label>
-                <input type="text" id="studentID" class="input-field" placeholder="Nhập mã lớp...">
-            </div>
-            <div class="mode-container">
-                <span id="modeLabel" style="font-weight: bold; font-size: 0.9rem;">CHẾ ĐỘ THI (20 PHÚT)</span>
-                <label class="switch">
-                    <input type="checkbox" id="modeToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <button class="btn-primary" onclick="initQuiz()">BẮT ĐẦU LÀM BÀI <i class="fas fa-arrow-right"></i></button>
+    <div class="caee-header" id="caee-header" style="display:none;">
+        <div id="header-text">SÁT HẠCH VẬN HÀNH XE NÂNG</div>
+        <div id="timer" class="timer-box">20:00</div>
+    </div>
+
+    <div id="quiz-screen" style="display:none;">
+        <div class="main-quiz" id="quiz-container"></div>
+        <div class="sidebar">
+            <p style="text-align: center; font-weight: bold;">SƠ ĐỒ CÂU HỎI</p>
+            <div class="q-grid" id="nav-grid"></div>
+            <button class="btn-submit" onclick="submitQuiz()">NỘP BÀI</button>
+        </div>
+    </div>
+
+    <script>
+        // Tab "Câu hỏi xe nâng hàng" (gid=1176419369)
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCf-F3dCvJi6pr4elMqwG9YrNtmB-GWds7YCmf09JbTv8AY3gtrwXpcMXc8KTQmpuJhc0al2jSBR4B/pub?gid=1176419369&single=true&output=csv";
+        
+        let allQuestions = [], selectedQuestions = [], studentAnswers = [];
+        let currentIndex = 0, timeLeft = 1200, timer, isFinished = false;
+
+        // Tải dữ liệu từ tab Xe nâng
+        Papa.parse(CSV_URL, {
+            download: true, header: true,
+            complete: function(results) {
+                allQuestions = results.data.filter(r => r.CauHoi).map(r => ({
+                    q: r.CauHoi.trim(),
+                    options: [r.A, r.B, r.C, r.D].filter(o => o && o.trim() !== ""),
+                    correct: r.DapAnDung ? r.DapAnDung.trim() : "",
+                    // Giaithich
+                    exp: r["Giải thích"] || r.GiaiThich || "Chú ý thực hiện đúng quy trình an toàn của thầy dạy."
+                }));
+            }
+        });
+
+        const modeToggle = document.getElementById('modeToggle');
+        modeToggle.addEventListener('change', function() {
+            const isPractice = this.checked;
+            document.getElementById('modeText').innerText = isPractice ? "Ôn tập (Có giải thích)" : "Thi sát hạch";
+            document.getElementById('modeText').style.color = isPractice ? "#28a745" : "#ff6600";
+            localStorage.setItem('mode', isPractice ? 'practice' : 'exam');
+        });
+
+        function startQuiz() {
+            const name = document.getElementById('studentName').value;
+            if (!name || allQuestions.length === 0) return alert("Vui lòng nhập tên và đợi dữ liệu!");
+            
+            selectedQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 30);
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('caee-header').style.display = 'flex';
+            document.getElementById('quiz-screen').style.display = 'grid';
+            
+            showQuestion(0);
+            timer = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft/60), s = timeLeft%60;
+                document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
+                if(timeLeft <= 0) submitQuiz(true);
+            }, 1000);
+        }
+
+        function showQuestion(idx) {
+            currentIndex = idx;
+            const q = selectedQuestions[idx];
+            const saved = studentAnswers.find(a => a.id === idx);
+            const isPractice = localStorage.getItem('mode') === 'practice';
+            
+            let html = `<p style="color:#666; margin-bottom:10px;">Câu ${idx+1}/30</p>
+                        <h3 style="margin-bottom:20px;">${q.q}</h3>`;
+            
+         q.options.forEach(opt => {
+    let stateClass = "";
+    if (saved) {
+        // Cần trim() để loại bỏ khoảng trắng thừa từ Excel
+        const cleanOpt = opt.trim();
+        const cleanCorrect = q.correct.trim();
+        const cleanSavedAns = saved.ans.trim();
+
+        if (isPractice) {
+         // CHẾ ĐỘ ÔN TẬP: Hiện đáp án đúng và lỗi sai của người dùng
+    if (cleanOpt === cleanCorrect) {
+        // Nếu là đáp án đúng -> Luôn hiện màu xanh (Correct)
+        stateClass = "correct"; 
+    } else if (cleanOpt === cleanSavedAns) {
+        // Nếu người dùng chọn cái này nhưng nó không phải đáp án đúng -> Hiện màu đỏ (Wrong)
+        stateClass = "wrong";
+    }
+} else {
+    // CHẾ ĐỘ THI: Chỉ đánh dấu câu đang chọn để người dùng biết
+    if (cleanOpt === cleanSavedAns) {
+        stateClass = "selected-exam";
+    }
+}
+    html += `<div class="option-item ${stateClass}" onclick="handleSelect(this, '${opt}')">${opt}</div>`;
+});
+
+            html += `<div id="exp" class="explanation-box" style="display:${(saved && isPractice)?'block':'none'}">
+                        <b>Giaithich:</b><br>${q.exp}
+                     </div>`;
+            
+            html += `<div class="nav-footer">
+                <button class="btn-nav" onclick="showQuestion(${idx-1})" ${idx===0?'style="visibility:hidden"':''}>‹ TRƯỚC</button>
+                <button class="btn-nav" onclick="${idx===29?'submitQuiz()':'showQuestion('+(idx+1)+')'}">${idx===29?'NỘP BÀI':'TIẾP ›'}</button>
+            </div>`;
+            
+            document.getElementById('quiz-container').innerHTML = html;
+            updateGrid();
+        }
+
+        function handleSelect(el, ansText) {
+            if (isFinished) return;
+            const idx = studentAnswers.findIndex(a => a.id === currentIndex);
+            if (idx > -1) studentAnswers[idx].ans = ansText;
+            else studentAnswers.push({ id: currentIndex, ans: ansText });
+
+            // Nếu là ôn tập, vẽ lại để hiện đúng/sai ngay
+            if (localStorage.getItem('mode') === 'practice') showQuestion(currentIndex);
+            else {
+                document.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected-exam'));
+                el.classList.add('selected-exam');
+                updateGrid();
+            }
+        }
+
+        function updateGrid() {
+            const grid = document.getElementById('nav-grid');
+            grid.innerHTML = "";
+            selectedQuestions.forEach((_, i) => {
+                const isAns = studentAnswers.some(a => a.id === i);
+                const active = i === currentIndex ? 'active' : '';
+                const filled = isAns ? 'answered' : '';
+                grid.innerHTML += `<div class="grid-item ${active} ${filled}" onclick="showQuestion(${i})">${i+1}</div>`;
+            });
+        }
+
+        function submitQuiz(auto = false) {
+            if (isFinished || (!auto && !confirm("Xác nhận nộp bài?"))) return;
+            isFinished = true; clearInterval(timer);
+            
+            let score = 0;
+            studentAnswers.forEach(a => { if(a.ans === selectedQuestions[a.id].correct) score++; });
+            alert(`Kết quả: ${score}/30 - ${score >= 25 ? 'ĐẠT' : 'KHÔNG ĐẠT'}`);
+            location.reload();
+        }
+    </script>
+</body>
+</html>
