@@ -132,26 +132,7 @@
         let allQuestions = [], selectedQuestions = [], studentAnswers = [];
         let currentQuestionIndex = 0, timeLeft = 1200, timerInterval, isSubmitted = false;
         let isPracticeMode = false;
-
-        // TẢI DỮ LIỆU TỪ GOOGLE SHEETS
-        function loadData() {
-            Papa.parse(SHEET_CSV_URL, {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    allQuestions = results.data.filter(r => r.CauHoi).map(r => ({
-                        question: r.CauHoi,
-                        options: [r.A, r.B, r.C, r.D].filter(o => o && o.trim() !== ""),
-                        answer: r.DapAnDung ? r.DapAnDung.trim() : "",
-                        // LẤY GIẢI THÍCH TỪ CỘT "Giaithich" CỦA BẠN
-                        explanation: r.Giaithich || "Thực hiện đúng quy trình an toàn kỹ thuật."
-                    }));
-                }
-            });
-        }
-        window.onload = loadData;
-
-        // Chuyển đổi chế độ Ôn tập / Thi
+               // Chuyển đổi chế độ Ôn tập / Thi
         document.getElementById('modeToggle').addEventListener('change', function() {
             isPracticeMode = this.checked;
             const modeTxt = document.getElementById('modeText');
@@ -343,12 +324,14 @@
             isSubmitted = true; 
             clearInterval(timerInterval);
 
-            // Tính điểm
-            let score = 0;
-            studentAnswers.forEach(a => {
-                if(a.selected === selectedQuestions[a.qIndex].answer) score++;
-            });
-            const result = score >= 25 ? "ĐẠT" : "KHÔNG ĐẠT";
+           // ĐOẠN MÃ ĐÃ SỬA
+studentAnswers.forEach(a => {
+    // Chuyển cả 2 về chữ thường và xóa khoảng trắng thừa để so sánh chính xác
+    const svChon = (a.selected || "").toString().trim().toLowerCase();
+    const dapAnDung = (selectedQuestions[a.qIndex].answer || "").toString().trim().toLowerCase();
+    
+    if(svChon === dapAnDung) score++;
+});
             
             // GỬI KẾT QUẢ VỀ GOOGLE SHEETS
             const payload = { 
