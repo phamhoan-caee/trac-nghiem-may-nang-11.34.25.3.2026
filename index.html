@@ -241,7 +241,100 @@
                 if (timeLeft <= 0) submitQuiz(true);
             }, 1000);
         }
+   // SỬA HÀM loadData(): Thêm .trim() cho tất cả dữ liệu
+        function loadData() {
+            Papa.parse(SHEET_CSV_URL, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    allQuestions = results.data.filter(r => r.CauHoi).map(r => ({
+                        question: r.CauHoi.trim(),
+                        options: [r.A, r.B, r.C, r.D]
+                            .filter(o => o && o.trim() !== "")
+                            .map(o => o.trim()),
+                        answer: r.DapAnDung ? r.DapAnDung.trim() : "",
+                        explanation: r.Giaithich ? r.Giaithich.trim() : "Thực hiện đúng quy trình an toàn kỹ thuật."
+                    }));
+                }
+            });
+        }
+        window.onload = loadData;
 
+        document.getElementById('modeToggle').addEventListener('change', function() {
+            isPracticeMode = this.checked;
+            const modeTxt = document.getElementById('modeText');
+            modeTxt.innerText = isPracticeMode ? "Ôn tập" : "Thi sát hạch";
+            modeTxt.style.color = isPracticeMode ? "#007bff" : "#ff6600";
+        });
+
+        function startQuiz() {
+            const name = document.getElementById('studentName').value;
+            if (!name) return alert("Vui lòng nhập họ tên học viên!");
+            if (allQuestions.length < 1) return alert("Dữ liệu đang tải...");
+            selectedQuestions = [...allQuestions].sort(() => 0.5 - Math.random()).slice(0, 30);
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('caee-header').style.display = 'flex';
+            document.getElementById('quiz-screen').style.display = 'grid';
+            renderGrid();
+            showQuestion(0);
+            startTimer();
+        }
+
+        function showQuestion(index) {
+            currentQuestionIndex = index;
+            const q = selectedQuestions[index];
+            const stored = studentAnswers.find(a => a.qIndex === index);
+            let html = `<div class="question-text">Câu ${index + 1}: ${q.question}</div>`;
+            q.options.forEach(opt => {
+                let cls = "";
+                if (stored) {
+                    if (isPracticeMode) {
+                        if (opt === q.answer) cls = "correct";
+                        else if (opt === stored.selected) cls = "wrong";
+                    } else if (opt === stored.selected) {
+                        cls = "selected";
+                    }
+                }
+                html += `<div class="option-item ${cls} ${isSubmitted ? 'disabled' : ''}" onclick="selectAnswer(this, ${index}, '${opt}')">${opt}</div>`;
+            });
+            if (isPracticeMode && stored) {
+                html += `<div class="explanation-box"><b>Giải thích:</b> ${q.explanation}</div>`;
+            }
+            html += `<div class="navigation-btns">
+                <button class="btn-nav" onclick="showQuestion(${index-1})" ${index===0?'style="visibility:hidden"':''}>TRƯỚC</button>
+                <button class="btn-nav" onclick="${index===29?'submitQuiz()':'showQuestion('+(index+1)+')'}">${index===29 ? 'NỘP BÀI' : 'TIẾP THEO'}</button>
+            </div>`;
+            document.getElementById('quiz-content').innerHTML = html;
+            renderGrid();
+        }
+
+        function selectAnswer(el, qIdx, ans) {
+            if (isSubmitted) return;
+            const idx = studentAnswers.findIndex(a => a.qIndex === qIdx);
+            if (idx !== -1) studentAnswers[idx].selected = ans;
+            else studentAnswers.push({ qIndex: qIdx, selected: ans });
+            showQuestion(qIdx);
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('nav-grid');
+            grid.innerHTML = "";
+            selectedQuestions.forEach((_, i) => {
+                const hasAns = studentAnswers.some(a => a.qIndex === i);
+                const active = i === currentQuestionIndex ? 'active' : '';
+                const answered = hasAns ? 'answered' : '';
+                grid.innerHTML += `<div class="grid-item ${active} ${answered}" onclick="showQuestion(${i})">${i+1}</div>`;
+            });
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft/60), s = timeLeft%60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (timeLeft <= 0) submitQuiz(true);
+            }, 1000);
+        }
         // HÀM NỘP BÀI VÀ GỬI VỀ "Ketquananghang"
         async function submitQuiz(auto = false) {
             if (isSubmitted) return;
